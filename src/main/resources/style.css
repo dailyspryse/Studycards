@@ -1,0 +1,30 @@
+/* Globales Styling für die StudyCards-Anwendung */
+
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #fafafa;
+}
+
+.label {
+    -fx-text-fill: #333;
+}
+
+.button {
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.text-field, .text-area {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.table-view {
+    -fx-background-radius: 8;
+}
+
+.list-view {
+    -fx-background-radius: 8;
+}
