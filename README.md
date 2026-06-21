@@ -2,10 +2,17 @@
 
 Lernkarten-Anwendung mit Java und JavaFX.
 
+## Starten
+
+```
+mvn javafx:run
+```
+
 ## Status
 
-- [x] Projektstruktur
-- [x] Datenmodelle
+- [x] Projektstruktur und Datenmodelle
 - [x] Datenbankverbindung
-- [ ] GUI
+- [x] DAO-Klassen (CRUD)
+- [x] Hauptansicht (Übersicht)
+- [ ] Detailansicht (Karten)
 - [ ] Lernmodus
