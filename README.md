@@ -2,6 +2,10 @@
 
 Lernkarten-Anwendung mit Java und JavaFX.
 
+## Voraussetzungen
+
+- Java 17, Maven, MySQL
+
 ## Starten
 
 ```
@@ -10,9 +14,10 @@ mvn javafx:run
 
 ## Status
 
-- [x] Projektstruktur und Datenmodelle
-- [x] Datenbankverbindung
-- [x] DAO-Klassen (CRUD)
-- [x] Hauptansicht (Übersicht)
-- [ ] Detailansicht (Karten)
-- [ ] Lernmodus
+- [x] Datenmodelle und Datenbankverbindung
+- [x] DAO-Klassen
+- [x] Hauptansicht
+- [x] Detailansicht (Kartenverwaltung)
+- [x] Lernmodus (teilweise)
+- [ ] Ergebnis-Anzeige am Ende
+- [ ] Bestätigungsdialoge beim Löschen
