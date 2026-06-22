@@ -17,7 +17,9 @@ import javafx.scene.text.TextAlignment;
 import java.util.List;
 
 /**
- * Lernmodus - Karten einzeln anzeigen und bewerten.
+ * Lernmodus: Zeigt Karten einzeln an.
+ * Frage wird gezeigt, Benutzer deckt die Antwort auf
+ * und bewertet ob er es wusste oder nicht.
  */
 public class StudyModeView {
 
@@ -27,9 +29,12 @@ public class StudyModeView {
     private List<Card> cards;
     private int currentIndex;
     private boolean showingAnswer;
+
+    // Zähler für diese Lernsession
     private int correctCount;
     private int wrongCount;
 
+    // UI-Elemente
     private BorderPane root;
     private Label cardLabel;
     private Label progressLabel;
@@ -45,6 +50,7 @@ public class StudyModeView {
         this.correctCount = 0;
         this.wrongCount = 0;
 
+        // Karten laden
         CardDao cardDao = new CardDao();
         this.cards = cardDao.findBySetId(studySet.getId());
 
@@ -56,6 +62,7 @@ public class StudyModeView {
         root = new BorderPane();
         root.setPadding(new Insets(20));
 
+        // Header
         Button backBtn = new Button("<- Zurück");
         backBtn.setOnAction(e -> app.showSetDetailView(studySet));
 
@@ -71,6 +78,7 @@ public class StudyModeView {
         header.setPadding(new Insets(0, 0, 20, 0));
         root.setTop(header);
 
+        // Karten-Anzeige in der Mitte (sieht aus wie eine Karteikarte)
         cardLabel = new Label();
         cardLabel.setFont(Font.font("System", 18));
         cardLabel.setWrapText(true);
@@ -86,12 +94,14 @@ public class StudyModeView {
                 "-fx-padding: 40; " +
                 "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);");
 
+        // Klick auf Karte = umdrehen
         cardLabel.setOnMouseClicked(e -> flipCard());
 
         VBox centerBox = new VBox(cardLabel);
         centerBox.setAlignment(Pos.CENTER);
         root.setCenter(centerBox);
 
+        // Buttons unten
         prevBtn = new Button("<- Vorherige");
         prevBtn.setOnAction(e -> previousCard());
         prevBtn.setPrefWidth(120);
@@ -126,6 +136,9 @@ public class StudyModeView {
         root.setBottom(bottomBox);
     }
 
+    /**
+     * Zeigt die aktuelle Karte an (Frage oder Antwort).
+     */
     private void showCurrentCard() {
         if (cards.isEmpty()) return;
 
@@ -153,38 +166,66 @@ public class StudyModeView {
             flipBtn.setText("Antwort zeigen");
         }
 
+        // Buttons deaktivieren wenn am Anfang/Ende
         prevBtn.setDisable(currentIndex == 0);
         nextBtn.setDisable(currentIndex == cards.size() - 1);
 
-        progressLabel.setText("Karte " + (currentIndex + 1) + " von " + cards.size());
+        progressLabel.setText("Karte " + (currentIndex + 1) + " von " + cards.size()
+                + "   |   Gewusst: " + correctCount + "   Nicht gewusst: " + wrongCount);
     }
 
+    /**
+     * Dreht die Karte um.
+     */
     private void flipCard() {
         showingAnswer = !showingAnswer;
         showCurrentCard();
     }
 
-    
+    /**
+     * Karte als "gewusst" markieren, dann weiter zur nächsten.
+     */
     private void markCorrect() {
         correctCount++;
+        goToNextOrFinish();
+    }
+
+    /**
+     * Karte als "nicht gewusst" markieren, dann weiter zur nächsten.
+     */
+    private void markWrong() {
+        wrongCount++;
+        goToNextOrFinish();
+    }
+
+    /**
+     * Geht zur nächsten Karte, oder zeigt das Ergebnis am Ende.
+     */
+    private void goToNextOrFinish() {
         if (currentIndex < cards.size() - 1) {
             currentIndex++;
             showingAnswer = false;
             showCurrentCard();
         } else {
-            System.out.println("Fertig! Gewusst: " + correctCount + " Nicht gewusst: " + wrongCount);
+            showResult();
         }
     }
 
-    private void markWrong() {
-        wrongCount++;
-        if (currentIndex < cards.size() - 1) {
-            currentIndex++;
-            showingAnswer = false;
-            showCurrentCard();
-        } else {
-            System.out.println("Fertig! Gewusst: " + correctCount + " Nicht gewusst: " + wrongCount);
-        }
+    /**
+     * Zeigt das Ergebnis der Lernsession.
+     */
+    private void showResult() {
+        int total = correctCount + wrongCount;
+        int percent = total > 0 ? (correctCount * 100 / total) : 0;
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Fertig!");
+        alert.setHeaderText("Ergebnis: " + studySet.getName());
+        alert.setContentText(
+                "Gewusst: " + correctCount + "\n" +
+                "Nicht gewusst: " + wrongCount + "\n" +
+                "Erfolgsquote: " + percent + "%");
+        alert.showAndWait();
     }
 
     private void previousCard() {

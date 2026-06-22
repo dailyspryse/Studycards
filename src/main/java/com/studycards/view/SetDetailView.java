@@ -16,8 +16,11 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import java.util.Optional;
+
 /**
  * Detailansicht für ein Lernset.
+ * Zeigt alle Karten in einer Tabelle mit Buttons zum Verwalten.
  */
 public class SetDetailView {
 
@@ -40,6 +43,7 @@ public class SetDetailView {
         root = new BorderPane();
         root.setPadding(new Insets(20));
 
+        // Header mit Zurück-Button
         Button backBtn = new Button("<- Zurück");
         backBtn.setOnAction(e -> app.showMainView());
 
@@ -53,10 +57,11 @@ public class SetDetailView {
         header.setPadding(new Insets(0, 0, 15, 0));
         root.setTop(header);
 
+        // Tabelle mit Frage- und Antwort-Spalten
         tableView = new TableView<>();
         cardList = FXCollections.observableArrayList();
         tableView.setItems(cardList);
-        tableView.setPlaceholder(new Label("Noch keine Karten."));
+        tableView.setPlaceholder(new Label("Noch keine Karten. Klicke 'Neue Karte'!"));
 
         TableColumn<Card, String> questionCol = new TableColumn<>("Frage");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("question"));
@@ -70,6 +75,7 @@ public class SetDetailView {
         tableView.getColumns().add(answerCol);
         root.setCenter(tableView);
 
+        // Buttons rechts
         Button addBtn = new Button("Neue Karte");
         Button editBtn = new Button("Bearbeiten");
         Button deleteBtn = new Button("Löschen");
@@ -101,9 +107,13 @@ public class SetDetailView {
         cardList.addAll(cardDao.findBySetId(studySet.getId()));
     }
 
+    /**
+     * Dialog zum Hinzufügen einer neuen Karte.
+     */
     private void addCard() {
         Dialog<Card> dialog = new Dialog<>();
         dialog.setTitle("Neue Karte");
+        dialog.setHeaderText("Neue Lernkarte erstellen");
 
         ButtonType createBtn = new ButtonType("Erstellen", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(createBtn, ButtonType.CANCEL);
@@ -111,6 +121,7 @@ public class SetDetailView {
         TextArea questionField = new TextArea();
         questionField.setPromptText("Frage");
         questionField.setPrefRowCount(3);
+
         TextArea answerField = new TextArea();
         answerField.setPromptText("Antwort");
         answerField.setPrefRowCount(3);
@@ -142,9 +153,15 @@ public class SetDetailView {
         });
     }
 
+    /**
+     * Dialog zum Bearbeiten einer Karte.
+     */
     private void editCard() {
         Card selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null) {
+            showAlert("Bitte wähle zuerst eine Karte aus.");
+            return;
+        }
 
         Dialog<Card> dialog = new Dialog<>();
         dialog.setTitle("Karte bearbeiten");
@@ -168,7 +185,9 @@ public class SetDetailView {
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(button -> {
-            if (button == saveBtn) {
+            if (button == saveBtn
+                    && !questionField.getText().trim().isEmpty()
+                    && !answerField.getText().trim().isEmpty()) {
                 selected.setQuestion(questionField.getText().trim());
                 selected.setAnswer(answerField.getText().trim());
                 return selected;
@@ -182,13 +201,34 @@ public class SetDetailView {
         });
     }
 
-    
+    /**
+     * Löscht die ausgewählte Karte nach Bestätigung.
+     */
     private void deleteCard() {
         Card selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null) {
+            showAlert("Bitte wähle zuerst eine Karte aus.");
+            return;
+        }
 
-        cardDao.delete(selected.getId());
-        loadCards();
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Löschen");
+        confirm.setHeaderText("Karte wirklich löschen?");
+
+        confirm.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.OK) {
+                cardDao.delete(selected.getId());
+                loadCards();
+            }
+        });
+    }
+
+    private void showAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Hinweis");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 
     public Parent getRoot() {
