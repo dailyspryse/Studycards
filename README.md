@@ -36,22 +36,17 @@ mvn javafx:run
 
 ## Projektstruktur
 
-```
-src/main/java/com/studycards/
-├── App.java                  Startpunkt, Navigation zwischen Views
-├── model/
-│   ├── StudySet.java         Lernset (Name, Beschreibung)
-│   └── Card.java             Lernkarte (Frage, Antwort)
-├── database/
-│   └── DatabaseManager.java  MySQL-Verbindung, Tabellen erstellen
-├── dao/
-│   ├── StudySetDao.java      CRUD für Lernsets
-│   └── CardDao.java          CRUD für Karten
-└── view/
-    ├── MainView.java         Übersicht aller Sets
-    ├── SetDetailView.java    Karten eines Sets verwalten
-    └── StudyModeView.java    Lernmodus
-```
+Alles liegt unter `src/main/java/com/studycards/`:
+
+- **App.java** — Startpunkt, wechselt zwischen den Views
+- **model/StudySet.java** — Datenklasse für ein Lernset (Name, Beschreibung)
+- **model/Card.java** — Datenklasse für eine Karte (Frage, Antwort)
+- **database/DatabaseManager.java** — MySQL-Verbindung und Tabellen erstellen
+- **dao/StudySetDao.java** — Datenbankzugriff für Lernsets
+- **dao/CardDao.java** — Datenbankzugriff für Karten
+- **view/MainView.java** — Übersicht aller Sets
+- **view/SetDetailView.java** — Karten eines Sets verwalten
+- **view/StudyModeView.java** — Lernmodus
 
 ## Aufbau
 
