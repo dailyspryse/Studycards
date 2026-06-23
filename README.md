@@ -1,73 +1,74 @@
 # StudyCards
 
-Eine Desktop-Anwendung zur Erstellung, Verwaltung und Nutzung digitaler Lernkarten.
-Entwickelt mit Java 17 und JavaFX.
+Lernkarten-App für den Desktop — erstellt im Rahmen des Semesterprojekts in Java Development with JavaFX.
+
+Die Idee ist simpel: Man erstellt Lernsets, packt Karten mit Frage und Antwort rein und kann sich dann im Lernmodus selber abfragen.
 
 ## Voraussetzungen
 
-- **Java 17** oder höher
-- **Maven** (mindestens 3.8)
-- **MySQL Server** (z.B. über XAMPP oder direkte Installation)
+- Java 21 oder höher
+- Maven
+- MySQL (z.B. über XAMPP)
 
-## Datenbank einrichten
+## Setup
 
-1. MySQL Server starten
-2. Das SQL-Setup-Script ausführen:
+1. MySQL starten
+2. Datenbank anlegen — entweder das Script ausführen:
    ```
-   mysql -u root -p < setup.sql
+   mysql -u root < setup.sql
    ```
-   Alternativ: Die Datei `setup.sql` in MySQL Workbench oeffnen und ausführen.
+   oder die `setup.sql` manuell in MySQL Workbench öffnen und ausführen.
 
-**Hinweis:** Falls dein MySQL-Benutzer ein Passwort hat, muss dieses in
-`DatabaseManager.java` bei der Konstante `PASSWORD` eingetragen werden.
+Falls euer MySQL ein Passwort hat: in `DatabaseManager.java` bei `PASSWORD` eintragen.
 
-## Anwendung starten
+## Starten
 
 ```
 mvn javafx:run
 ```
 
-## Funktionen
+## Was kann die App?
 
-- **Lernsets verwalten** - Erstellen, bearbeiten und löschen von Lernsets
-- **Karten verwalten** - Erstellen, bearbeiten und löschen von Lernkarten
-- **Lernmodus** - Karten abfragen, Antwort aufdecken, als gewusst/nicht gewusst bewerten
-- **Statistik** - Erfolgsquote am Ende jeder Lernsession
-- **Favoriten** - Karten als Favorit markieren
-- **Mischen** - Karten in zufaelliger Reihenfolge lernen
+- Lernsets anlegen, bearbeiten, löschen
+- Karten mit Frage + Antwort erstellen und verwalten
+- Lernmodus: Karte umdrehen, als gewusst/nicht gewusst bewerten
+- Am Ende einer Session wird die Erfolgsquote angezeigt
 
 ## Projektstruktur
 
 ```
 src/main/java/com/studycards/
-├── App.java                    - Hauptklasse und Navigation
+├── App.java                  Startpunkt, Navigation zwischen Views
 ├── model/
-│   ├── StudySet.java           - Datenmodell für Lernsets
-│   └── Card.java               - Datenmodell für Lernkarten
+│   ├── StudySet.java         Lernset (Name, Beschreibung)
+│   └── Card.java             Lernkarte (Frage, Antwort)
 ├── database/
-│   └── DatabaseManager.java    - Datenbankverbindung und Tabellenerstellung
+│   └── DatabaseManager.java  MySQL-Verbindung, Tabellen erstellen
 ├── dao/
-│   ├── StudySetDao.java        - Datenbankzugriff für Lernsets
-│   └── CardDao.java            - Datenbankzugriff für Karten
+│   ├── StudySetDao.java      CRUD für Lernsets
+│   └── CardDao.java          CRUD für Karten
 └── view/
-    ├── MainView.java           - Hauptansicht (Übersicht)
-    ├── SetDetailView.java      - Detailansicht (Kartenverwaltung)
-    └── StudyModeView.java      - Lernmodus
+    ├── MainView.java         Übersicht aller Sets
+    ├── SetDetailView.java    Karten eines Sets verwalten
+    └── StudyModeView.java    Lernmodus
 ```
 
-## Architektur
+## Aufbau
 
-Die Anwendung folgt einer dreischichtigen Architektur:
+Drei-Schichten-Architektur:
+- **Model** — einfache Java-Klassen die beschreiben wie ein Set/eine Karte aussieht
+- **DAO** — alles was mit der Datenbank zu tun hat (SQL-Queries etc.)
+- **View** — die Oberfläche die der Benutzer sieht, komplett in JavaFX
 
-- **Model-Schicht** (`model/`): Datenklassen die die Struktur von Lernsets und Karten abbilden
-- **Datenzugriffsschicht** (`dao/`): Data Access Objects die alle SQL-Operationen kapseln
-- **Darstellungsschicht** (`view/`): JavaFX-Views die die Benutzeroberfläche aufbauen
+Die `App.java` verbindet die drei Schichten und wechselt zwischen den Views.
 
-Die `App`-Klasse dient als zentrale Steuerung und verwaltet die Navigation zwischen den Ansichten.
+## Technologien
 
-## Verwendete Technologien
+- Java 21
+- JavaFX 21.0.2
+- MySQL mit JDBC
+- Maven
 
-- Java 17
-- JavaFX 17.0.2 (javafx-controls)
-- MySQL 8 mit JDBC-Treiber
-- Maven als Build-Tool
+## Hinweis zur Verwendung von KI-Tools
+
+Bei der Recherche und beim Debugging habe ich teilweise ChatGPT und ähnliche Tools als Hilfsmittel genutzt — hauptsächlich um Fehlermeldungen zu verstehen und JavaFX-Syntax nachzuschlagen. Der Code wurde von mir geschrieben und verstanden.
